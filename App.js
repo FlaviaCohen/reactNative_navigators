@@ -1,46 +1,50 @@
-import Animated, {
-  useSharedValue,
-  withTiming,
-  useAnimatedStyle,
-  Easing,
-} from "react-native-reanimated";
-import { View, Button } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { NavigationContainer } from "@react-navigation/native";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import WelcomeScreen from "./screens/WelcomeScreen";
+import UserScreen from "./screens/UserScreen";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function AnimatedStyleUpdateExample(props) {
-  const randomWidth = useSharedValue(10);
+const Drawer = createDrawerNavigator();
 
-  const config = {
-    duration: 500,
-    easing: Easing.bezier(0.5, 0.01, 0, 1),
-  };
-
-  const style = useAnimatedStyle(() => {
-    return {
-      width: withTiming(randomWidth.value, config),
-    };
-  });
-
+const App = () => {
+  const { Navigator, Screen } = Drawer;
   return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
-      }}
-    >
-      <Animated.View
-        style={[
-          { width: 100, height: 80, backgroundColor: "black", margin: 30 },
-          style,
-        ]}
-      />
-      <Button
-        title="toggle"
-        onPress={() => {
-          randomWidth.value = Math.random() * 350;
-        }}
-      />
-    </View>
+    <>
+      <StatusBar style="light" />
+      <NavigationContainer>
+        <Navigator
+          screenOptions={{
+            drawerActiveBackgroundColor: "#f0e1ff",
+            drawerActiveTintColor: "#3c0a6b",
+            //drawerStyle: { backgroundColor: "#ccc" },
+          }}
+        >
+          <Screen
+            name="Welcome"
+            component={WelcomeScreen}
+            options={{
+              headerStyle: { backgroundColor: "#3c0a6b" },
+              headerTintColor: "white",
+              drawerLabel: "Welcome Screen",
+              drawerIcon: ({ color, size }) => (
+                <Ionicons name="home" color={color} size={size} />
+              ),
+            }}
+          />
+          <Screen
+            name="User"
+            component={UserScreen}
+            options={{
+              drawerIcon: ({ color, size }) => (
+                <Ionicons name="person" color={color} size={size} />
+              ),
+            }}
+          />
+        </Navigator>
+      </NavigationContainer>
+    </>
   );
-}
+};
+
+export default App;
